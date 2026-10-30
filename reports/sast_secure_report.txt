@@ -1,0 +1,79 @@
+Run started:2026-10-30 14:52:30.346136+00:00
+
+Test results:
+>> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.
+   Severity: Low   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess
+   Location: .\app.py:6:0
+5	import secrets
+6	import subprocess
+7	from pathlib import Path
+
+--------------------------------------------------
+>> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
+   Severity: Low   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
+   Location: .\app.py:251:17
+250	            ],
+251	            shell=False,
+252	            cwd=str(BASE_DIR),
+253	            capture_output=True,
+254	            text=True,
+255	            timeout=5
+256	        )
+257	    except subprocess.TimeoutExpired:
+258	        return Response("Processing timed out", status=504)
+259	    except OSError:
+260	        return Response("Processing execution error", status=500)
+261	
+262	    if result.returncode != 0:
+263	        return Response(f"File processing rejected: {result.stdout or result.stderr}", status=400)
+264	
+
+--------------------------------------------------
+>> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.
+   Severity: Low   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess
+   Location: .\processor.py:3:0
+2	import re
+3	import subprocess
+4	from pathlib import Path
+
+--------------------------------------------------
+>> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
+   Severity: Low   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html
+   Location: .\processor.py:21:15
+20	            [str(PARSER_BIN), target_string],
+21	            shell=False,
+22	            capture_output=True,
+23	            text=True,
+24	            timeout=3
+25	        )
+26	        if proc.returncode != 0:
+27	            print(f"[SECURITY ALERT] Native parser rejected metadata: {proc.stdout.strip() or proc.stderr.strip()}")
+28	            return False
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 278
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 4
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 4
+Files skipped (0):
