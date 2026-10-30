@@ -1,67 +1,237 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Secure File Sharing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureDrop - Hardened Document Vault (CYC386)</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-hover: #1e40af;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 850px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        header {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+        }
+        .auth-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1.25rem;
+            background: #fafafa;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        input[type="text"], input[type="password"], input[type="file"] {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+        }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s ease-in-out;
+        }
+        button:hover {
+            background: var(--primary-hover);
+        }
+        button.btn-danger {
+            background: var(--danger);
+        }
+        button.btn-danger:hover {
+            background: #b91c1c;
+        }
+        button.btn-sm {
+            padding: 0.35rem 0.7rem;
+            font-size: 0.8rem;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .file-meta {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .security-banner {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #ecfdf5;
+            border-left: 4px solid var(--success);
+            font-size: 0.82rem;
+            color: #065f46;
+        }
+    </style>
 </head>
 <body>
-    <h1>Secure File Sharing Application</h1>
-
-    {% if not session.get("user_id") %}
-
-        <h2>Register</h2>
-        <form action="/register" method="POST">
-            <input name="username" placeholder="Username" required>
-            <input name="password" type="password"
-                   placeholder="Password (8+ characters)" required>
-            <button type="submit">Register</button>
-        </form>
-
-        <h2>Login</h2>
-        <form action="/login" method="POST">
-            <input name="username" placeholder="Username" required>
-            <input name="password" type="password"
-                   placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-
-    {% else %}
-
-        <p>Logged in as: <strong>{{ session["username"] }}</strong></p>
-
-        <form action="/logout" method="POST">
-            <button type="submit">Logout</button>
-        </form>
-
-        <h2>Upload File</h2>
-        <form action="/upload" method="POST"
-              enctype="multipart/form-data">
-            <input type="file" name="file" accept=".txt" required>
-            <button type="submit">Upload</button>
-        </form>
-
-        <h2>My Files</h2>
-
-        {% for file in files %}
+    <div class="container">
+        <header>
             <div>
-                <p>{{ file["original_name"] }} (ID: {{ file["id"] }})</p>
-
-                <form action="/process" method="POST">
-                    <input type="hidden" name="file_id"
-                           value="{{ file['id'] }}">
-                    <button type="submit">Process</button>
-                </form>
-
-                <a href="{{ url_for('download_file', file_id=file['id']) }}">
-                    Download
-                </a>
+                <h1>SecureDrop Document Vault</h1>
+                <span class="badge">CYC386 DevSecOps Sprint &bull; Fall 2026</span>
             </div>
-            <hr>
-        {% else %}
-            <p>No files uploaded yet.</p>
-        {% endfor %}
+            {% if session.get("user_id") %}
+                <div>
+                    <span>User: <strong>{{ session["username"] }}</strong></span>
+                    <form action="/logout" method="POST" style="display:inline; margin-left: 0.5rem;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <button type="submit" class="btn-sm btn-danger">Logout</button>
+                    </form>
+                </div>
+            {% endif %}
+        </header>
 
-    {% endif %}
+        {% if not session.get("user_id") %}
+            <div class="auth-grid">
+                <div class="card">
+                    <h3>Account Login</h3>
+                    <form action="/login" method="POST">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" name="username" placeholder="Enter username" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" name="password" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" style="width: 100%;">Sign In</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Register Account</h3>
+                    <form action="/register" method="POST">
+                        <div class="form-group">
+                            <label>Username (3-30 chars)</label>
+                            <input type="text" name="username" placeholder="Choose username" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password (8+ chars)</label>
+                            <input type="password" name="password" placeholder="Choose secure password" required>
+                        </div>
+                        <button type="submit" style="width: 100%; background: #047857;">Create Account</button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <h3>Upload New Document</h3>
+                <form action="/upload" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <div class="form-group">
+                        <input type="file" name="file" accept=".txt" required>
+                        <small style="color: var(--muted);">Strict policy: Only alphanumeric .txt documents accepted (max 5MB).</small>
+                    </div>
+                    <button type="submit">Upload Document</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>My Encrypted Documents</h3>
+                {% if files %}
+                    {% for file in files %}
+                        <div class="file-item">
+                            <div>
+                                <strong>{{ file["original_name"] }}</strong>
+                                <div class="file-meta">Record ID: #{{ file["id"] }}</div>
+                            </div>
+                            <div class="file-actions">
+                                <a href="{{ url_for('download_file', file_id=file['id']) }}" class="badge" style="text-decoration:none; padding: 0.4rem 0.8rem; background: #e0f2fe;">Download</a>
+                                
+                                <form action="/process" method="POST" style="display:inline;" target="_blank">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <input type="hidden" name="file_id" value="{{ file['id'] }}">
+                                    <button type="submit" class="btn-sm">Process Native</button>
+                                </form>
+
+                                <form action="{{ url_for('delete_file', file_id=file['id']) }}" method="POST" style="display:inline;" onsubmit="return confirm('Confirm file deletion?');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <button type="submit" class="btn-sm btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--muted); font-style: italic;">No documents uploaded yet. Upload a .txt file above.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <div class="security-banner">
+            <strong>Active DevSecOps Defenses:</strong>
+            Synchronizer Token CSRF Protection &bull; Object-Level Authorization (IDOR) &bull; Frame-Ancestors 'none' (Anti-Clickjacking) &bull; Parameterized Subprocess (Anti-Command Injection) &bull; Hardened Native C Bounds Checking (Anti-Buffer Overflow).
+        </div>
+    </div>
 </body>
 </html>

@@ -1,0 +1,71 @@
+Run started:2026-10-30 14:52:29.766508+00:00
+
+Test results:
+>> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.
+   Severity: Low   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess
+   Location: .\app_vulnerable.py:4:0
+3	import sqlite3
+4	import subprocess
+5	from pathlib import Path
+
+--------------------------------------------------
+>> Issue: [B105:hardcoded_password_string] Possible hardcoded password: 'insecure-hardcoded-secret-key-for-lab-demo'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html
+   Location: .\app_vulnerable.py:24:17
+23	app = Flask(__name__)
+24	app.secret_key = "insecure-hardcoded-secret-key-for-lab-demo"
+25	
+
+--------------------------------------------------
+>> Issue: [B602:subprocess_popen_with_shell_equals_true] subprocess call with shell=True identified, security issue.
+   Severity: High   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b602_subprocess_popen_with_shell_equals_true.html
+   Location: .\app_vulnerable.py:212:14
+211	    try:
+212	        res = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=5)
+213	        return Response(f"STDOUT:\n{res.stdout}\nSTDERR:\n{res.stderr}", mimetype="text/plain")
+
+--------------------------------------------------
+>> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.
+   Severity: Low   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess
+   Location: .\processor_vulnerable.py:2:0
+1	import sys
+2	import subprocess
+3	from pathlib import Path
+
+--------------------------------------------------
+>> Issue: [B602:subprocess_popen_with_shell_equals_true] subprocess call with shell=True identified, security issue.
+   Severity: High   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b602_subprocess_popen_with_shell_equals_true.html
+   Location: .\processor_vulnerable.py:21:15
+20	    try:
+21	        proc = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=5)
+22	        print("--- Output ---")
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 205
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 3
+		Medium: 0
+		High: 2
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 1
+		High: 4
+Files skipped (0):

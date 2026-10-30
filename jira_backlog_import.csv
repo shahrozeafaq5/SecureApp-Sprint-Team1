@@ -1,0 +1,31 @@
+Issue Type,Issue key,Summary,Description,Assignee,Priority,Status,Epic Link
+Epic,SASS-1,Project Setup & PNE,"Initialize repository, configure branch protection, and execute Protection Needs Elicitation.",Talal Nadeem Awan,High,Done,
+Epic,SASS-2,Threat Modeling & Risk Assessment,"Develop Context and Level-1 DFDs, execute systematic STRIDE, construct Attack Trees, and calculate CVSS v3.1 scores.",Shahroze Afaq,High,Done,
+Epic,SASS-3,Vulnerability Testing & Remediation,"Identify, demonstrate in lab, remediate, and verify all 5 mandatory vulnerability classes.",Talal Nadeem Awan,High,Done,
+Epic,SASS-4,Security Testing & CI/CD Pipeline,"Implement automated SAST/DAST security scanning and configure GitHub Actions CI/CD with fail-on-critical gate.",Shahroze Afaq,High,Done,
+Epic,SASS-5,Documentation & Submission,"Compile IEEE-style final report, produce narrated technical demo video, and ensure repository hygiene.",Talal Nadeem Awan,High,Done,
+Story,SASS-6,Repository Initialization & Environment Setup,"Set up Git repo, MinGW GCC toolchain, Python virtual environment, and Flask baseline.",Shahroze Afaq,High,Done,SASS-1
+Story,SASS-7,Protection Needs Elicitation & CIA Triad Mapping,"Elicit assets, stakeholder protection needs, CIA mapping matrix, and measurable security requirements.",Talal Nadeem Awan,High,Done,SASS-1
+Story,SASS-8,Data Flow Diagrams (Level-0 and Level-1 DFDs),"Map system data flows, trust boundaries, processes, data stores, and external entities.",Shahroze Afaq,High,Done,SASS-2
+Story,SASS-9,Systematic STRIDE Threat Analysis & Attack Trees,"Execute STRIDE per DFD element and construct Attack Trees for Command Injection RCE and Buffer Overflow.",Shahroze Afaq,High,Done,SASS-2
+Story,SASS-10,CVSS v3.1 Scoring & Prioritized Risk Register,"Calculate CVSS v3.1 base scores with justified vector strings and link to Jira sprint issues.",Talal Nadeem Awan,High,Done,SASS-2
+Story,SASS-11,Buffer Overflow Demonstration & Remediation (CWE-120/121),"Demonstrate stack smashing in C parser; remediate with bounds check, bounded memcpy, and stack canaries.",Shahroze Afaq,High,Done,SASS-3
+Story,SASS-12,OS Command Injection Demonstration & Remediation (CWE-78),"Demonstrate shell=True command injection; remediate with parameterized execve subprocess and regex whitelist.",Shahroze Afaq,High,Done,SASS-3
+Story,SASS-13,Insecure Direct Object Reference Demonstration & Remediation (CWE-639),"Demonstrate cross-user file download; remediate with object-level authorization on all database queries.",Talal Nadeem Awan,High,Done,SASS-3
+Story,SASS-14,Cross-Site Request Forgery Demonstration & Remediation (CWE-352),"Demonstrate state-changing request forgery; remediate with Synchronizer Token Pattern and SameSite cookies.",Talal Nadeem Awan,High,Done,SASS-3
+Story,SASS-15,Clickjacking UI Redressing Demonstration & Remediation (CWE-1021),"Demonstrate iframe framing; remediate with X-Frame-Options DENY and CSP frame-ancestors none.",Talal Nadeem Awan,High,Done,SASS-3
+Story,SASS-16,Automated Static Application Security Testing (Bandit SAST),"Configure Bandit with fail-on-high policy; document before/after scan metrics showing remediation.",Shahroze Afaq,High,Done,SASS-4
+Story,SASS-17,Dynamic Security Testing & HTTP Header Verification (DAST),"Audit live application headers and anti-framing controls, demonstrating zero exploitable web exposures.",Talal Nadeem Awan,High,Done,SASS-4
+Story,SASS-18,GitHub Actions CI/CD Security Pipeline,"Build automated pipeline (.github/workflows/ci-cd.yml) with build, test, SAST scanning, and security gates.",Shahroze Afaq,High,Done,SASS-4
+Story,SASS-19,Final IEEE-Style Engineering Report (18-30 Pages),"Compile comprehensive IEEE report covering architecture, threat models, remediations, testing, and contributions.",Talal Nadeem Awan,High,Done,SASS-5
+Story,SASS-20,Narrated Technical Demo Video & Presentation Guide,"Record 6-10 minute demonstration of architecture, live before/after vulnerability proofs, and CI/CD gate.",Shahroze Afaq,High,Done,SASS-5
+Sub-task,SASS-21,Buffer Overflow: PoC Exploit Demonstration,"Execute oversized input against vulnerable parser to prove stack smashing detection (Screenshot #16).",Shahroze Afaq,High,Done,SASS-11
+Sub-task,SASS-22,Buffer Overflow: Secure Remediation & Verification,"Implement CERT C bounds checking and bounded memcpy; verify clean exit (Screenshot #17).",Shahroze Afaq,High,Done,SASS-11
+Sub-task,SASS-23,Command Injection: PoC Exploit Demonstration,"Submit shell payload 'report.txt & echo LAB_MARKER' to prove command execution (Screenshot #18).",Shahroze Afaq,High,Done,SASS-12
+Sub-task,SASS-24,Command Injection: Secure Remediation & Verification,"Implement shell=False execve array and regex allowlist; verify rejection (Screenshot #19).",Shahroze Afaq,High,Done,SASS-12
+Sub-task,SASS-25,IDOR: PoC Exploit Demonstration,"Demonstrate Bob accessing Alice's confidential document on Port 5001 (Screenshot #20).",Talal Nadeem Awan,High,Done,SASS-13
+Sub-task,SASS-26,IDOR: Secure Remediation & Verification,"Enforce owner_id relational check on queries; verify HTTP 404 Access Denied (Screenshot #21).",Talal Nadeem Awan,High,Done,SASS-13
+Sub-task,SASS-27,CSRF: PoC Exploit Demonstration,"Execute forged state-changing deletion request via external HTML form on Port 5001 (Screenshot #22).",Talal Nadeem Awan,High,Done,SASS-14
+Sub-task,SASS-28,CSRF: Secure Remediation & Verification,"Implement Synchronizer Token Pattern; verify HTTP 403 Forbidden on forged requests (Screenshot #23).",Talal Nadeem Awan,High,Done,SASS-14
+Sub-task,SASS-29,Clickjacking: PoC Exploit Demonstration,"Render vulnerable web application inside third-party iframe harness on Port 5001 (Screenshot #24).",Talal Nadeem Awan,High,Done,SASS-15
+Sub-task,SASS-30,Clickjacking: Secure Remediation & Verification,"Enforce X-Frame-Options DENY and CSP frame-ancestors 'none'; verify framing blocked (Screenshot #25).",Talal Nadeem Awan,High,Done,SASS-15
