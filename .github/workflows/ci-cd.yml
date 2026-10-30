@@ -33,13 +33,17 @@ jobs:
       - name: Compile Native C Component (with Stack Canary Protection)
         run: |
           gcc -g -O2 -Wall -Wextra -fstack-protector-strong -D_FORTIFY_SOURCE=2 native/metadata.c native/metadata_cli.c -o native/metadata_parser.exe
+          gcc -g -O2 -Wall -Wextra -fstack-protector-strong native/metadata.c native/metadata_cli.c -o native/metadata_parser
           gcc -g -O2 -Wall -Wextra -fstack-protector-strong native/metadata.c native/harness.c -o parser_secure.exe
+          gcc -g -O2 -Wall -Wextra -fstack-protector-strong native/metadata.c native/harness.c -o parser_secure
           gcc -g -O0 -fstack-protector-all native/metadata_vulnerable.c native/harness.c -o parser_vulnerable.exe
+          gcc -g -O0 -fstack-protector-all native/metadata_vulnerable.c native/harness.c -o parser_vulnerable
+          chmod +x native/metadata_parser* parser_* || true
 
       - name: Execute Native C Buffer Overflow Verification
         run: |
           ./parser_secure.exe
-          # Verify vulnerable harness triggers stack canary detection
+          # Verify vulnerable harness triggers stack canary detection (non-zero exit)
           ./parser_vulnerable.exe || echo "Vulnerable parser terminated by stack canary as expected (status $?)"
 
       - name: Run Application Unit Tests

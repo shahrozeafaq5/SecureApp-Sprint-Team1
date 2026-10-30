@@ -5,6 +5,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "uploads"
 
+
 # CWE-78 Vulnerable Processor: Executes command via shell=True without parameterization or whitelisting
 def main():
     if len(sys.argv) < 2:
@@ -14,7 +15,8 @@ def main():
     user_input = sys.argv[1]
 
     # Deliberately VULNERABLE: Direct string interpolation into shell command (CWE-78)
-    cmd = f"type uploads\\{user_input}"
+    # Works across both Windows cmd.exe and Linux sh/bash
+    cmd = f"echo Processing {user_input}"
     print(f"[VULNERABLE SHELL] Executing: {cmd}")
 
     try:
@@ -28,6 +30,7 @@ def main():
     except Exception as e:
         print(f"Execution error: {e}")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

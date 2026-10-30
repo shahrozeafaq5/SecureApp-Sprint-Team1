@@ -5,7 +5,9 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "uploads"
-PARSER_BIN = BASE_DIR / "native" / "metadata_parser.exe"
+PARSER_BIN = BASE_DIR / "native" / ("metadata_parser.exe" if sys.platform == "win32" else "metadata_parser")
+if not PARSER_BIN.is_file():
+    PARSER_BIN = BASE_DIR / "native" / "metadata_parser.exe"
 
 FILENAME_PATTERN = r"[A-Za-z0-9_-]{1,64}\.txt"
 

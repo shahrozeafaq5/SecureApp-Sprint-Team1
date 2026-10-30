@@ -47,7 +47,11 @@ class TestVulnerabilityProof(unittest.TestCase):
 
         # Vulnerable binary test (should abort due to stack canary / crash)
         vuln_bin = ROOT / "parser_vulnerable.exe"
+        if not vuln_bin.is_file():
+            vuln_bin = ROOT / "parser_vulnerable"
         if vuln_bin.is_file():
+            if sys.platform != "win32":
+                os.chmod(str(vuln_bin), 0o755)
             res_vuln = subprocess.run([str(vuln_bin)], capture_output=True, text=True)
             print(f"[-] Vulnerable parser exit code: {res_vuln.returncode}")
             print(f"[-] Output preview:\n{res_vuln.stdout[:200]}")
@@ -56,7 +60,11 @@ class TestVulnerabilityProof(unittest.TestCase):
 
         # Secure binary test (must catch bounds without crashing)
         sec_bin = ROOT / "parser_secure.exe"
+        if not sec_bin.is_file():
+            sec_bin = ROOT / "parser_secure"
         if sec_bin.is_file():
+            if sys.platform != "win32":
+                os.chmod(str(sec_bin), 0o755)
             res_sec = subprocess.run([str(sec_bin)], capture_output=True, text=True)
             print(f"[+] Secure parser exit code: {res_sec.returncode}")
             print(f"[+] Secure parser output:\n{res_sec.stdout}")
@@ -108,13 +116,13 @@ class TestVulnerabilityProof(unittest.TestCase):
         print(" [TEST 3] CWE-639: INSECURE DIRECT OBJECT REFERENCE (IDOR)")
         print("=======================================================")
 
-        # Register User 1 (Alice) and User 2 (Bob)
-        self.sec_client.post("/register", data={"username": "alice_sec", "password": "Password123!"})
+        # Register User 1 (Alice)
+        self.sec_client.post("/register", data={"username": "alice_sec_poc", "password": "Password123!"})
         alice_file_path = ROOT / "uploads" / "alice_confidential.txt"
         alice_file_path.write_text("CONFIDENTIAL_ALICE_DATA_TOP_SECRET")
 
         with secure_app.database() as db:
-            db.execute("DELETE FROM files WHERE original_name = 'alice_confidential.txt'")
+            db.execute("DELETE FROM files WHERE id = 101")
             db.execute(
                 "INSERT INTO files (id, owner_id, original_name, saved_name) VALUES (101, 1, 'alice_confidential.txt', 'alice_confidential.txt')"
             )
@@ -123,7 +131,7 @@ class TestVulnerabilityProof(unittest.TestCase):
         with self.sec_client.session_transaction() as sess:
             sess["user_id"] = 999
             sess["username"] = "bob_sec"
-        
+
         # Bob attempts to download Alice's file (File ID 101, owner_id 1) in secure app
         res_sec = self.sec_client.get("/download/101")
         print(f"[+] Secure App response code to Bob accessing Alice's file: {res_sec.status_code}")
@@ -132,7 +140,6 @@ class TestVulnerabilityProof(unittest.TestCase):
         print("[+] CONFIRMED: IDOR attempt rejected with HTTP 404/Access Denied!")
 
         # IN VULNERABLE APP:
-        # Alice uploads file into vuln db
         conn = vuln_app.sqlite3.connect(vuln_app.DB_PATH)
         conn.execute("INSERT OR REPLACE INTO users(id, username, password) VALUES (1, 'alice_vuln', 'pass1')")
         conn.execute("INSERT OR REPLACE INTO users(id, username, password) VALUES (2, 'bob_vuln', 'pass2')")
