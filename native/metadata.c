@@ -1,16 +1,36 @@
 #include <stdio.h>
 #include <string.h>
 
+/*
+ * Secure Metadata Parser
+ * Remediated according to CERT C Coding Standard (STR31-C, ARR38-C)
+ * - Validates input pointer
+ * - Strictly enforces maximum buffer capacity before copying
+ * - Uses bounded memory copy (memcpy with explicit null-terminator)
+ */
+
+#define MAX_FILENAME_LEN 32
+
 int parse_metadata(const char *input) {
-    char filename[16];
+    char filename[MAX_FILENAME_LEN];
 
-    // Vulnerable: no length validation
-    size_t len = strlen(input);
-
-    for (size_t i = 0; i <= len; i++) {
-        filename[i] = input[i];
+    if (input == NULL) {
+        fprintf(stderr, "Rejected: NULL input pointer\n");
+        return 1;
     }
 
-    printf("Processed: %s\n", filename);
+    size_t len = strlen(input);
+
+    // Enforce bounds: strictly leave room for null terminator
+    if (len >= sizeof(filename)) {
+        printf("Rejected: metadata too long (length %u exceeds buffer size %u)\n", 
+               (unsigned int)len, (unsigned int)(sizeof(filename) - 1));
+        return 1;
+    }
+
+    memcpy(filename, input, len);
+    filename[len] = '\0';
+
+    printf("Processed safely: %s\n", filename);
     return 0;
 }
